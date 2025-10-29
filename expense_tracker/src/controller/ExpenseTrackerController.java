@@ -8,6 +8,9 @@ import java.util.List;
 
 import model.ExpenseTrackerModel;
 import model.Transaction;
+import filter.TransactionFilter;
+import filter.CategoryFilter;
+import filter.AmountFilter;
 /**
  * Controller that mediates between the View and the Model.
  *
@@ -18,6 +21,7 @@ public class ExpenseTrackerController {
   
   private ExpenseTrackerModel model;
   private ExpenseTrackerView view;
+  private TransactionFilter activeFilter;
 
   /**
    * Creates a controller with the given model and view.
@@ -38,6 +42,9 @@ public class ExpenseTrackerController {
 
     // Get transactions from model
     List<Transaction> transactions = model.getTransactions();
+    if (activeFilter != null) {
+      transactions = activeFilter.filter(transactions);
+    }
 
     // Pass to view
     view.refreshTable(transactions);
@@ -60,9 +67,47 @@ public class ExpenseTrackerController {
     
     Transaction t = new Transaction(amount, category);
     model.addTransaction(t);
-    view.getTableModel().addRow(new Object[]{t.getAmount(), t.getCategory(), t.getTimestamp()});
     refresh();
     return true;
+  }
+  
+  /**
+   * Applies the requested filter. Only one filter can be active at a time.
+   * @param filterType one of "none", "amount", "category"
+   * @param rawValue the raw input value for the filter (ignored for none)
+   * @return true if filter applied (or cleared) successfully; false if validation failed
+   */
+  public boolean applyFilter(String filterType, String rawValue) {
+    if (filterType == null || filterType.equalsIgnoreCase("none")) {
+      activeFilter = null;
+      refresh();
+      return true;
+    }
+    if (filterType.equalsIgnoreCase("amount")) {
+      if (rawValue == null || rawValue.trim().isEmpty()) {
+        return false;
+      }
+      try {
+        double amount = Double.parseDouble(rawValue.trim());
+        if (!InputValidation.isValidAmount(amount)) {
+          return false;
+        }
+        activeFilter = new AmountFilter(amount);
+        refresh();
+        return true;
+      } catch (NumberFormatException nfe) {
+        return false;
+      }
+    }
+    if (filterType.equalsIgnoreCase("category")) {
+      if (!InputValidation.isValidCategory(rawValue)) {
+        return false;
+      }
+      activeFilter = new CategoryFilter(rawValue.trim());
+      refresh();
+      return true;
+    }
+    return false;
   }
   
   // Other controller methods
