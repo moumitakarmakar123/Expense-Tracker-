@@ -12,6 +12,9 @@ import java.text.NumberFormat;
 import model.Transaction;
 import java.util.List;
 
+/**
+ * Swing-based view for displaying transactions and capturing user input.
+ */
 public class ExpenseTrackerView extends JFrame {
 
   private JTable transactionsTable;
@@ -21,6 +24,9 @@ public class ExpenseTrackerView extends JFrame {
   private DefaultTableModel model;
   
 
+  /**
+   * Constructs the UI and initializes Swing components.
+   */
   public ExpenseTrackerView() {
     setTitle("Expense Tracker"); // Set title
     setSize(600, 400); // Make GUI larger
@@ -67,6 +73,7 @@ public class ExpenseTrackerView extends JFrame {
   
   }
 
+
   public void refreshTable(List<Transaction> transactions) {
       // Clear existing rows
       model.setRowCount(0);
@@ -93,17 +100,29 @@ public class ExpenseTrackerView extends JFrame {
 
   
   
+  /**
+   * @return button used to add a transaction
+   */
   public JButton getAddTransactionBtn() {
     return addTransactionBtn;
   }
+  /**
+   * @return the table model backing the transactions table
+   */
   public DefaultTableModel getTableModel() {
     return model;
   }
   // Other view methods
+    /**
+     * @return the transactions table component
+     */
     public JTable getTransactionsTable() {
     return transactionsTable;
   }
 
+  /**
+   * @return parsed amount from the amount field, or 0 if empty
+   */
   public double getAmountField() {
     if(amountField.getText().isEmpty()) {
       return 0;
@@ -113,15 +132,22 @@ public class ExpenseTrackerView extends JFrame {
     }
   }
 
+  /**
+   * @param amountField field to set as the amount input
+   */
   public void setAmountField(JFormattedTextField amountField) {
     this.amountField = amountField;
   }
 
   
+  /**
+   * @return raw text from the category field
+   */
   public String getCategoryField() {
     return categoryField.getText();
   }
 
+  
   public void setCategoryField(JTextField categoryField) {
     this.categoryField = categoryField;
   }
