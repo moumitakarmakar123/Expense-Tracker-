@@ -22,6 +22,10 @@ public class ExpenseTrackerView extends JFrame {
   private JFormattedTextField amountField;
   private JTextField categoryField;
   private DefaultTableModel model;
+  private JComboBox<String> filterTypeCombo;
+  private JFormattedTextField filterAmountField;
+  private JTextField filterCategoryField;
+  private JButton applyFilterBtn;
   
 
   /**
@@ -47,6 +51,15 @@ public class ExpenseTrackerView extends JFrame {
     JLabel categoryLabel = new JLabel("Category:");
     categoryField = new JTextField(10);
 
+    // Filter controls
+    JLabel filterByLabel = new JLabel("Filter:");
+    filterTypeCombo = new JComboBox<>(new String[]{"None", "Amount", "Category"});
+    NumberFormat filterFormat = NumberFormat.getNumberInstance();
+    filterAmountField = new JFormattedTextField(filterFormat);
+    filterAmountField.setColumns(8);
+    filterCategoryField = new JTextField(8);
+    applyFilterBtn = new JButton("Apply Filter");
+
     // Create table
     transactionsTable = new JTable(model);
   
@@ -57,12 +70,22 @@ public class ExpenseTrackerView extends JFrame {
     inputPanel.add(categoryLabel); 
     inputPanel.add(categoryField);
     inputPanel.add(addTransactionBtn);
+
+    JPanel filterPanel = new JPanel();
+    filterPanel.add(filterByLabel);
+    filterPanel.add(filterTypeCombo);
+    filterPanel.add(filterAmountField);
+    filterPanel.add(filterCategoryField);
+    filterPanel.add(applyFilterBtn);
   
     JPanel buttonPanel = new JPanel();
     buttonPanel.add(addTransactionBtn);
   
     // Add panels to frame
-    add(inputPanel, BorderLayout.NORTH);
+    JPanel north = new JPanel(new BorderLayout());
+    north.add(inputPanel, BorderLayout.NORTH);
+    north.add(filterPanel, BorderLayout.SOUTH);
+    add(north, BorderLayout.NORTH);
     add(new JScrollPane(transactionsTable), BorderLayout.CENTER); 
     add(buttonPanel, BorderLayout.SOUTH);
   
@@ -73,7 +96,10 @@ public class ExpenseTrackerView extends JFrame {
   
   }
 
-
+  /**
+   * Rebuilds the table contents from the given transactions and appends a total row.
+   * @param transactions transactions to render in the table
+   */
   public void refreshTable(List<Transaction> transactions) {
       // Clear existing rows
       model.setRowCount(0);
@@ -147,8 +173,26 @@ public class ExpenseTrackerView extends JFrame {
     return categoryField.getText();
   }
 
-  
+  /**
+   * @param categoryField field to set as the category input
+   */
   public void setCategoryField(JTextField categoryField) {
     this.categoryField = categoryField;
+  }
+
+  public JComboBox<String> getFilterTypeCombo() {
+    return filterTypeCombo;
+  }
+
+  public JFormattedTextField getFilterAmountField() {
+    return filterAmountField;
+  }
+
+  public JTextField getFilterCategoryField() {
+    return filterCategoryField;
+  }
+
+  public JButton getApplyFilterBtn() {
+    return applyFilterBtn;
   }
 }
